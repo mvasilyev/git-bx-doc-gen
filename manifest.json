@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "GitLab MR Documentation Generator",
+  "version": "1.0.0",
+  "description": "Automatically generates documentation for GitLab merge requests using AI",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "contextMenus"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https: http:;"
+  },
+  "host_permissions": [
+    "*://*.gitlab.com/*",
+    "*://*.gitlab.io/*",
+    "*://git.bx/*",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.gitlab.com/*/merge_requests/*",
+        "*://*.gitlab.io/*/merge_requests/*",
+        "*://git.bx/*/merge_requests/*"
+      ],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "GitLab MR Doc Generator"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["*://*.gitlab.com/*", "*://*.gitlab.io/*", "*://git.bx/*"]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "gitlab-mr-doc-generator",
+  "version": "1.0.0",
+  "description": "Chrome extension for generating documentation from GitLab merge requests using AI",
+  "main": "content.js",
+  "scripts": {
+    "build": "echo 'Extension files are ready for loading in Chrome'",
+    "dev": "echo 'Load the extension in Chrome Dev Mode from this directory'",
+    "package": "zip -r gitlab-mr-doc-generator-v$(node -p \"require('./package.json').version\").zip . -x '*.git*' 'node_modules/*' '*.DS_Store' '*.zip' '*.log'",
+    "validate": "node scripts/validate.js",
+    "clean": "rm -f *.zip"
+  },
+  "keywords": [
+    "chrome-extension",
+    "gitlab",
+    "documentation",
+    "ai",
+    "llm",
+    "merge-request",
+    "diff"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/gitlab-mr-doc-generator"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

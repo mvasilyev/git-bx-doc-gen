@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Validate Extension",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"scripts/validate.js"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"isBackground": false
+		}
+	]
+}
