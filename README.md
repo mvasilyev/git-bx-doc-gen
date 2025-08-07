@@ -10,6 +10,7 @@ A Chrome extension that automatically generates comprehensive documentation for 
 - **GitLab Integration**: Seamlessly integrates with GitLab's UI with a dedicated button
 - **Copy & Save**: Easy copying of generated documentation
 - **Multiple LLM Support**: Works with OpenAI GPT models, Anthropic Claude, and any OpenAI-compatible API
+- **Local Ollama Support**: Automatic detection and integration with local Ollama for privacy-focused usage
 
 ## Installation
 
@@ -20,6 +21,10 @@ A Chrome extension that automatically generates comprehensive documentation for 
 3. Enable "Developer mode" in the top right
 4. Click "Load unpacked" and select the extension directory
 5. The extension will be installed and ready to use
+
+### Local Ollama Setup
+
+For privacy-focused usage with local Ollama, see [OLLAMA_INTEGRATION.md](OLLAMA_INTEGRATION.md) for detailed setup instructions.
 
 ### Configuration
 
@@ -46,6 +51,7 @@ A Chrome extension that automatically generates comprehensive documentation for 
   - OpenAI (GPT-3.5, GPT-4, GPT-4 Turbo)
   - Anthropic (Claude 3 Sonnet, Claude 3 Opus)
   - Any OpenAI-compatible API
+  - Local Ollama (privacy-focused, no API key required)
 
 ## Configuration Options
 
@@ -72,6 +78,7 @@ The extension comes with a comprehensive default system prompt that generates:
 - API keys are never transmitted except directly to your configured LLM endpoint
 - No data is sent to third parties beyond your chosen LLM provider
 - Diff content is only sent to your configured LLM service
+- **Local Ollama**: When using local Ollama, all processing happens on your machine with no external API calls
 
 ## Development
 
@@ -114,6 +121,12 @@ For issues, feature requests, or questions:
 3. Include browser version, GitLab version, and error messages if applicable
 
 ## Changelog
+
+### Version 1.1.0
+- Added local Ollama integration
+- Automatic Ollama detection and model loading
+- Privacy-focused local processing option
+- No API key required for local Ollama usage
 
 ### Version 1.0.0
 - Initial release
