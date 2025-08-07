@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const modelSelect = document.getElementById('model');
   const customModelGroup = document.getElementById('custom-model-group');
   const resetBtn = document.getElementById('reset-btn');
+  const ollamaLink = document.getElementById('ollama-link');
+  const useOllamaLink = document.getElementById('use-ollama-link');
 
   // Default configuration
   const defaultConfig = {
@@ -22,6 +24,71 @@ Please include:
 
 Format your response in clean, readable markdown.`
   };
+
+  // Check if Ollama is available locally
+  async function checkOllamaAvailability() {
+    try {
+      const response = await fetch('http://localhost:11434/api/tags', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return data.models || [];
+      }
+    } catch (error) {
+      console.log('Ollama not available:', error.message);
+    }
+    return null;
+  }
+
+  // Load Ollama models into select
+  async function loadOllamaModels() {
+    const models = await checkOllamaAvailability();
+    if (models && models.length > 0) {
+      // Show Ollama link
+      ollamaLink.style.display = 'block';
+      
+      // Clear existing options except the first few default ones
+      const defaultOptions = ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo', 'claude-3-sonnet-20240229', 'claude-3-opus-20240229'];
+      const currentValue = modelSelect.value;
+      
+      // Keep default options
+      const defaultOptionElements = Array.from(modelSelect.children).filter(option => 
+        defaultOptions.includes(option.value)
+      );
+      
+      // Clear all options
+      modelSelect.innerHTML = '';
+      
+      // Add default options back
+      defaultOptionElements.forEach(option => {
+        modelSelect.appendChild(option);
+      });
+      
+      // Add Ollama models
+      models.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model.name;
+        option.textContent = `${model.name} (Ollama)`;
+        modelSelect.appendChild(option);
+      });
+      
+      // Restore current value if it was a custom model
+      if (currentValue && !defaultOptions.includes(currentValue)) {
+        const customOption = document.createElement('option');
+        customOption.value = 'custom';
+        customOption.textContent = 'Custom Model';
+        modelSelect.appendChild(customOption);
+        modelSelect.value = 'custom';
+        document.getElementById('customModel').value = currentValue;
+        customModelGroup.style.display = 'block';
+      }
+    }
+  }
 
   // Load saved configuration
   async function loadConfig() {
@@ -79,6 +146,14 @@ Format your response in clean, readable markdown.`
     }
   });
 
+  // Handle Ollama link click
+  useOllamaLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('baseUrl').value = 'http://localhost:11434';
+    document.getElementById('apiKey').value = 'ollama';
+    showStatus('Ollama URL set. No API key needed for local Ollama.', 'success');
+  });
+
   // Handle form submission
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -130,4 +205,7 @@ Format your response in clean, readable markdown.`
 
   // Initialize
   await loadConfig();
+  
+  // Check for Ollama availability and load models
+  await loadOllamaModels();
 });

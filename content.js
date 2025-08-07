@@ -136,7 +136,10 @@ class GitLabMRDocGenerator {
       return;
     }
 
-    if (!this.config.apiKey) {
+    // Check if this is an Ollama endpoint (no API key needed)
+    const isOllama = this.config.baseUrl.includes('localhost:11434') || this.config.baseUrl.includes('127.0.0.1:11434');
+    
+    if (!isOllama && !this.config.apiKey) {
       alert('Please configure your LLM API key in the extension popup first.');
       return;
     }
@@ -212,6 +215,9 @@ class GitLabMRDocGenerator {
   }
 
   async sendToLLM(diffContent) {
+    // Check if this is an Ollama endpoint
+    const isOllama = this.config.baseUrl.includes('localhost:11434') || this.config.baseUrl.includes('127.0.0.1:11434');
+    
     // For HTTP endpoints from HTTPS pages, use background script to make the request
     if (window.location.protocol === 'https:' && this.config.baseUrl.startsWith('http:')) {
       console.log('Using background script for HTTP request from HTTPS page');
@@ -220,7 +226,8 @@ class GitLabMRDocGenerator {
         chrome.runtime.sendMessage({
           type: 'MAKE_LLM_REQUEST',
           config: this.config,
-          diffContent: diffContent
+          diffContent: diffContent,
+          isOllama: isOllama
         }, (response) => {
           if (chrome.runtime.lastError) {
             reject(new Error(chrome.runtime.lastError.message));
@@ -233,14 +240,26 @@ class GitLabMRDocGenerator {
       });
     }
 
-    // Direct fetch for HTTPS endpoints or HTTP pages
-    const response = await fetch(`${this.config.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.config.apiKey}`
-      },
-      body: JSON.stringify({
+    // Prepare request based on API type
+    let requestBody;
+    let endpoint;
+    
+    if (isOllama) {
+      // Ollama API format
+      endpoint = `${this.config.baseUrl}/api/generate`;
+      requestBody = {
+        model: this.config.model,
+        prompt: `${this.config.systemPrompt}\n\nPlease generate documentation for this merge request:\n\n${diffContent}`,
+        stream: false,
+        options: {
+          temperature: 0.7,
+          num_predict: 2000
+        }
+      };
+    } else {
+      // OpenAI-compatible API format
+      endpoint = `${this.config.baseUrl}/chat/completions`;
+      requestBody = {
         model: this.config.model,
         messages: [
           {
@@ -254,7 +273,24 @@ class GitLabMRDocGenerator {
         ],
         max_tokens: 2000,
         temperature: 0.7
-      })
+      };
+    }
+
+    // Prepare headers
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    
+    // Add Authorization header only for non-Ollama APIs
+    if (!isOllama && this.config.apiKey) {
+      headers['Authorization'] = `Bearer ${this.config.apiKey}`;
+    }
+
+    // Make the request
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
@@ -263,7 +299,13 @@ class GitLabMRDocGenerator {
     }
 
     const data = await response.json();
-    return data.choices[0]?.message?.content || 'No documentation generated.';
+    
+    // Extract response based on API type
+    if (isOllama) {
+      return data.response || 'No documentation generated.';
+    } else {
+      return data.choices[0]?.message?.content || 'No documentation generated.';
+    }
   }
 
   displayDocumentation(documentation) {
