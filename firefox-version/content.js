@@ -398,7 +398,9 @@ class GitLabMRDocGenerator {
 }
 
 // Listen for messages from background script
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+
+browserAPI.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'CONFIG_UPDATED') {
     // Reload configuration when updated
     window.gitLabDocGenerator?.loadConfig();
