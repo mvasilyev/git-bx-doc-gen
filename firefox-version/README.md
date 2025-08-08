@@ -1,6 +1,6 @@
-# GitLab MR Documentation Generator
+# GitLab MR Documentation Generator (Firefox Version)
 
-A Chrome extension that automatically generates comprehensive documentation for GitLab merge requests using AI/LLM integration.
+A Firefox extension that automatically generates comprehensive documentation for GitLab merge requests using AI/LLM integration.
 
 ## Features
 
@@ -14,31 +14,25 @@ A Chrome extension that automatically generates comprehensive documentation for 
 
 ## Installation
 
-### Chrome Version
+### From Source
 
 1. Clone or download this repository
-2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable "Developer mode" in the top right
-4. Click "Load unpacked" and select the extension directory (root folder)
-5. The extension will be installed and ready to use
+2. Navigate to the `firefox-version` directory
+3. Open Firefox and navigate to `about:debugging`
+4. Click "This Firefox" tab
+5. Click "Load Temporary Add-on"
+6. Select the `manifest.json` file from the `firefox-version` directory
+7. The extension will be installed temporarily
 
-### Firefox Version
-
-1. Clone or download this repository
-2. Open Firefox and navigate to `about:debugging`
-3. Click "This Firefox" tab
-4. Click "Load Temporary Add-on" and select `manifest.json` from the `firefox-version` directory
-5. The extension will be installed temporarily
-
-For detailed installation instructions, see [INSTALLATION.md](INSTALLATION.md).
+**Note**: Firefox temporary add-ons are removed when you restart the browser. You'll need to reload the extension after each restart.
 
 ### Local Ollama Setup
 
 For privacy-focused usage with local Ollama, see [OLLAMA_INTEGRATION.md](OLLAMA_INTEGRATION.md) for detailed setup instructions.
 
-### Configuration
+## Configuration
 
-1. Click the extension icon in your Chrome toolbar
+1. Click the extension icon in your Firefox toolbar
 2. Configure your LLM settings:
    - **Base URL**: API endpoint (e.g., `https://api.openai.com/v1`)
    - **API Key**: Your API key for the chosen service
@@ -63,28 +57,16 @@ For privacy-focused usage with local Ollama, see [OLLAMA_INTEGRATION.md](OLLAMA_
   - Any OpenAI-compatible API
   - Local Ollama (privacy-focused, no API key required)
 
-## Configuration Options
+## Firefox-Specific Notes
 
-### LLM Settings
-
-- **Base URL**: The API endpoint for your LLM service
-- **API Key**: Authentication key for the LLM service
-- **Model**: The specific model to use for generation
-- **System Prompt**: Instructions for how to generate documentation
-
-### Default System Prompt
-
-The extension comes with a comprehensive default system prompt that generates:
-
-1. **Summary**: Brief overview of changes
-2. **Technical Details**: Key implementation details
-3. **Impact Analysis**: System impact assessment
-4. **Usage Examples**: Code examples when applicable
-5. **Testing Notes**: Testing recommendations
+- Uses Manifest V2 for maximum Firefox compatibility
+- Compatible with Firefox 57.0 and later
+- Uses `browser` API with fallback to `chrome` API
+- Background scripts are non-persistent for better performance
 
 ## Privacy & Security
 
-- All configuration is stored locally in Chrome's sync storage
+- All configuration is stored locally in Firefox's sync storage
 - API keys are never transmitted except directly to your configured LLM endpoint
 - No data is sent to third parties beyond your chosen LLM provider
 - Diff content is only sent to your configured LLM service
@@ -95,9 +77,10 @@ The extension comes with a comprehensive default system prompt that generates:
 ### Project Structure
 
 ```
-├── manifest.json          # Chrome extension manifest
+firefox-version/
+├── manifest.json          # Firefox extension manifest (V2)
 ├── content.js             # Main content script for GitLab pages
-├── background.js          # Background service worker
+├── background.js          # Background scripts (non-persistent)
 ├── popup.html            # Configuration popup interface
 ├── popup.js              # Popup functionality
 ├── styles.css            # Extension styles
@@ -107,17 +90,17 @@ The extension comes with a comprehensive default system prompt that generates:
 ### Local Development
 
 1. Make changes to the source files
-2. Go to `chrome://extensions/`
-3. Click the refresh icon on the extension card
+2. Go to `about:debugging`
+3. Click "Reload" on the extension card
 4. Test on a GitLab merge request page
 
-## Contributing
+## Differences from Chrome Version
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly on different GitLab instances
-5. Submit a pull request
+- Uses Manifest V2 instead of V3
+- Uses `browser_action` instead of `action`
+- Background scripts are non-persistent
+- Uses `browser` API with `chrome` fallback
+- Different installation process (temporary add-on)
 
 ## License
 
@@ -128,20 +111,4 @@ MIT License - see LICENSE file for details.
 For issues, feature requests, or questions:
 1. Check existing issues in the repository
 2. Create a new issue with detailed information
-3. Include browser version, GitLab version, and error messages if applicable
-
-## Changelog
-
-### Version 1.1.0
-- Added local Ollama integration
-- Automatic Ollama detection and model loading
-- Privacy-focused local processing option
-- No API key required for local Ollama usage
-
-### Version 1.0.0
-- Initial release
-- Support for GitLab merge request pages
-- Automatic diff view switching
-- Configurable LLM integration
-- Documentation generation and display
-- Support for multiple LLM providers
+3. Include Firefox version, GitLab version, and error messages if applicable

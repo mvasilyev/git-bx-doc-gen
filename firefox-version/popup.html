@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 350px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      margin: 0;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .header h2 {
+      margin: 0 0 5px 0;
+      color: #333;
+      font-size: 18px;
+    }
+    
+    .header p {
+      margin: 0;
+      color: #666;
+      font-size: 12px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+    
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #007cba;
+      box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.1);
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    
+    .btn-primary {
+      background-color: #007cba;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #005a87;
+    }
+    
+    .btn-secondary {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 12px;
+    }
+    
+    .status.success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    
+    .status.error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    
+    .small-text {
+      font-size: 11px;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>📚 GitLab MR Doc Generator</h2>
+    <p>Configure your LLM settings</p>
+  </div>
+
+  <div id="status"></div>
+
+  <form id="config-form">
+    <div class="form-group">
+      <label for="baseUrl">LLM Base URL:</label>
+      <input type="url" id="baseUrl" placeholder="https://api.openai.com/v1" required>
+      <div class="small-text">OpenAI, Anthropic, or any OpenAI-compatible API (HTTP/HTTPS supported)</div>
+      <div id="ollama-link" style="display: none; margin-top: 5px;">
+        <a href="#" id="use-ollama-link" style="color: #007cba; text-decoration: none; font-size: 12px;">🔗 Use local Ollama</a>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="apiKey">API Key:</label>
+      <input type="password" id="apiKey" placeholder="sk-..." required>
+      <div class="small-text">Your LLM API key (stored locally)</div>
+    </div>
+
+    <div class="form-group">
+      <label for="model">Model:</label>
+      <select id="model">
+        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+        <option value="gpt-4">GPT-4</option>
+        <option value="gpt-4-turbo">GPT-4 Turbo</option>
+        <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
+        <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+        <option value="custom">Custom Model</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="custom-model-group" style="display: none;">
+      <label for="customModel">Custom Model Name:</label>
+      <input type="text" id="customModel" placeholder="your-model-name">
+    </div>
+
+    <div class="form-group">
+      <label for="systemPrompt">System Prompt:</label>
+      <textarea id="systemPrompt" placeholder="Enter your custom system prompt..."></textarea>
+      <div class="small-text">Customize how the AI generates documentation</div>
+    </div>
+
+    <div class="button-group">
+      <button type="button" id="reset-btn" class="btn-secondary">Reset</button>
+      <button type="submit" class="btn-primary">Save</button>
+    </div>
+  </form>
+
+  <script src="popup.js"></script>
+</body>
+</html>

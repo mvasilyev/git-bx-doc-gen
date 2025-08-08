@@ -53,7 +53,8 @@ Format your response in clean, readable markdown.`
       ollamaLink.style.display = 'block';
       
       // Get current configuration to restore saved model
-      const result = await chrome.storage.sync.get(['llmConfig']);
+      const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+      const result = await browserAPI.storage.sync.get(['llmConfig']);
       const config = result.llmConfig || defaultConfig;
       
       // Clear existing options except the first few default ones
@@ -108,7 +109,8 @@ Format your response in clean, readable markdown.`
   // Load saved configuration
   async function loadConfig() {
     try {
-      const result = await chrome.storage.sync.get(['llmConfig']);
+      const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+      const result = await browserAPI.storage.sync.get(['llmConfig']);
       const config = result.llmConfig || defaultConfig;
       
       document.getElementById('baseUrl').value = config.baseUrl;
@@ -140,7 +142,8 @@ Format your response in clean, readable markdown.`
   // Save configuration
   async function saveConfig(config) {
     try {
-      await chrome.storage.sync.set({ llmConfig: config });
+      const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+      await browserAPI.storage.sync.set({ llmConfig: config });
       showStatus('Configuration saved successfully!', 'success');
       
       // Close popup after a short delay
